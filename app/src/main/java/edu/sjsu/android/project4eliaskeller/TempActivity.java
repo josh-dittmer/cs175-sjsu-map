@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class TempActivity extends AppCompatActivity {
 
-    Uri uri = Uri.parse("content://edu.sjsu.android.project4eliaskeller");
+    Uri uri = Uri.parse("content://edu.sjsu.android.project4EliasKeller");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

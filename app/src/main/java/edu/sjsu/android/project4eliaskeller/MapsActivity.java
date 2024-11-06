@@ -1,10 +1,23 @@
 package edu.sjsu.android.project4eliaskeller;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import android.content.ContentValues;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -18,7 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.sjsu.android.project4eliaskeller.databinding.ActivityMapsBinding;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor> {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -27,6 +40,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LatLng LOCATION_CS = new LatLng(37.333714, -121.881860);
 
     private final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.project4EliasKeller");
+
+    private boolean isMapStateRestored = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +57,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mapFragment.getMapAsync(this);
         }
 
+        LoaderManager.getInstance(this).restartLoader(0, null, this);
+
         binding.city.setOnClickListener(this::switchView);
         binding.univ.setOnClickListener(this::switchView);
         binding.cs.setOnClickListener(this::switchView);
+        binding.location.setOnClickListener(this::getLocation);
+        binding.uninstall.setOnClickListener(this::uninstall);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        loadMapState();
+
         mMap.setOnMapClickListener(this::addLocation);
         mMap.setOnMapLongClickListener(p -> deleteAllLocations());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveMapState();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        saveMapState();
+    }
+
+    public void getLocation(View view){
+        GPSTracker tracker = new GPSTracker(this);
+        tracker.getLocation();
     }
 
     private void addLocation(LatLng point) {
@@ -69,10 +99,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         values.put(LocationsDB.LAT, point.latitude);
         values.put(LocationsDB.LONG, point.longitude);
         values.put(LocationsDB.ZOOM, mMap.getCameraPosition().zoom);
-        getContentResolver().insert(CONTENT_URI, values);
+        new MyTask().execute(values);
     }
 
     private void deleteAllLocations() {
+        mMap.clear();
+        new MyTask().execute();
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        return new CursorLoader(this, CONTENT_URI, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+        if (cursor != null && cursor.moveToFirst()) {
+            LatLng point;
+            float zoom;
+            // Retrieve data row by row
+            do {
+                double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LAT));
+                double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONG));
+                point = new LatLng(lat, lng);
+                zoom = cursor.getFloat(cursor.getColumnIndexOrThrow(LocationsDB.ZOOM));
+
+                mMap.addMarker(new MarkerOptions().position(point));
+            } while (cursor.moveToNext());
+
+            if (!isMapStateRestored) {
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_UNIV, zoom);
+                mMap.moveCamera(update);
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+
+    }
+
+    class MyTask extends AsyncTask<ContentValues, Void, Void> {
+
+        @Override
+        protected Void doInBackground(ContentValues... values) {
+            // if there is a ContentValues object passed in, insert
+            if (values != null & values.length > 0 && values[0] != null) {
+                getContentResolver().insert(CONTENT_URI, values[0]);
+            } else {
+                // else delete
+                getContentResolver().delete(CONTENT_URI, null, null);
+            }
+            return null;
+        }
     }
 
     public void switchView(View view) {
@@ -89,4 +169,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.animateCamera(update);
     }
+
+    public void uninstall(View view) {
+        Uri packageURI = Uri.parse("package:" + getPackageName());
+        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
+        startActivity(uninstallIntent);
+    }
+
+    private void saveMapState() {
+        if (mMap != null) {
+            SharedPreferences prefs = getSharedPreferences("MapPreferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+
+            editor.putInt("mapType", mMap.getMapType());
+
+            LatLng target = mMap.getCameraPosition().target;
+            editor.putFloat("latitude", (float) target.latitude);
+            editor.putFloat("longitude", (float) target.longitude);
+            editor.putFloat("zoom", mMap.getCameraPosition().zoom);
+
+            editor.apply();
+        }
+    }
+
+
+    private void loadMapState() {
+        SharedPreferences prefs = getSharedPreferences("MapPreferences", MODE_PRIVATE);
+
+        int mapType = prefs.getInt("mapType", GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setMapType(mapType);
+
+        double latitude = prefs.getFloat("latitude", (float) LOCATION_UNIV.latitude);
+        double longitude = prefs.getFloat("longitude", (float) LOCATION_UNIV.longitude);
+        float zoom = prefs.getFloat("zoom", 14f); // Default zoom level
+
+        LatLng target = new LatLng(latitude, longitude);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(target, zoom);
+        mMap.moveCamera(update);
+
+        isMapStateRestored = true;
+    }
+
 }

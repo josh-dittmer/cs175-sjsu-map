@@ -13,9 +13,9 @@ public class LocationsDB extends SQLiteOpenHelper {
     protected final static String DATABASE_NAME= "LocationDB";
     protected final static String TABLE_NAME = "Locations";
     protected final static String ID = "_id";
-    protected final static String LAT = "latitude";
-    protected final static String LONG = "longitude";
-    protected final static String ZOOM = "zoom_level";
+    protected final static String LAT = "LATITUDE";
+    protected final static String LONG = "LONGITUDE";
+    protected final static String ZOOM = "ZOOM_LEVEL";
 
     private static final String CREATE_TABLE =
             String.format("CREATE TABLE %s (" +

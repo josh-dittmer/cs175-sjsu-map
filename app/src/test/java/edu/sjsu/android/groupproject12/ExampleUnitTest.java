@@ -1,4 +1,4 @@
-package edu.sjsu.android.project4eliaskeller;
+package edu.sjsu.android.groupproject12;
 
 import org.junit.Test;
 

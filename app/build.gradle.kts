@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "edu.sjsu.android.project4eliaskeller"
+    namespace = "edu.sjsu.android.groupproject12"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "edu.sjsu.android.project4eliaskeller"
+        applicationId = "edu.sjsu.android.groupproject12"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -1,11 +1,8 @@
-package edu.sjsu.android.project4eliaskeller;
+package edu.sjsu.android.groupproject12;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -17,7 +14,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -26,10 +22,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import edu.sjsu.android.project4eliaskeller.databinding.ActivityMapsBinding;
+import edu.sjsu.android.groupproject12.databinding.ActivityMapsBinding;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -39,7 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LatLng LOCATION_UNIV = new LatLng(37.335371, -121.881050);
     private final LatLng LOCATION_CS = new LatLng(37.333714, -121.881860);
 
-    private final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.project4EliasKeller");
+    private final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.groupProject12");
 
     private boolean isMapStateRestored = false;
 

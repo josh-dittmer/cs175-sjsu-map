@@ -16,7 +16,7 @@
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="58dp" />
 
-    <Button
+    <!--<Button
         android:id="@+id/city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,9 +46,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/univ"
-        app:layout_constraintTop_toTopOf="@+id/univ" />
+        app:layout_constraintTop_toTopOf="@+id/univ" />!-->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/uninstall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,16 +56,18 @@
         android:src="@android:drawable/ic_menu_delete"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toTopOf="@id/location"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"/>!-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@android:drawable/ic_menu_mylocation"
         android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/location_contentDescription"
+        android:focusable="true"
+        android:src="@android:drawable/btn_star_big_on"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -45,7 +45,7 @@
         </activity>
 
         <provider
-            android:name=".LocaltionsProvider"
+            android:name=".LocationsProvider"
             android:authorities="edu.sjsu.android.groupProject12"
             android:enabled="true"
             android:exported="false" />

@@ -7,20 +7,17 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
-import android.content.ContentValues;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -32,8 +29,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
 
-    private final LatLng LOCATION_UNIV = new LatLng(37.335371, -121.881050);
-    private final LatLng LOCATION_CS = new LatLng(37.333714, -121.881860);
+    private GPSTracker tracker;
+
+    //private final LatLng LOCATION_UNIV = new LatLng(37.335371, -121.881050);
+    //private final LatLng LOCATION_CS = new LatLng(37.333714, -121.881860);
 
     private final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.groupProject12");
 
@@ -55,41 +54,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LoaderManager.getInstance(this).restartLoader(0, null, this);
 
-        binding.city.setOnClickListener(this::switchView);
+        binding.location.setOnClickListener(v -> tracker.returnStartLocation());
+
+        /*binding.city.setOnClickListener(this::switchView);
         binding.univ.setOnClickListener(this::switchView);
         binding.cs.setOnClickListener(this::switchView);
         binding.location.setOnClickListener(this::getLocation);
-        binding.uninstall.setOnClickListener(this::uninstall);
+        binding.uninstall.setOnClickListener(this::uninstall);*/
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        tracker = new GPSTracker(this, mMap);
 
-        loadMapState();
+        //loadMapState();
 
-        mMap.setOnMapClickListener(this::addLocation);
-        mMap.setOnMapLongClickListener(p -> deleteAllLocations());
+        //mMap.setOnMapClickListener(this::addLocation);
+        //mMap.setOnMapLongClickListener(p -> deleteAllLocations());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        saveMapState();
+        //saveMapState();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        saveMapState();
+        //saveMapState();
     }
 
-    public void getLocation(View view){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == GPSTracker.PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                tracker.permissionsGranted();
+            } else {
+                Toast.makeText(this, "Permission denied!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /*public void getLocation(View view){
         GPSTracker tracker = new GPSTracker(this);
         tracker.getLocation();
-    }
+    }*/
 
-    private void addLocation(LatLng point) {
+    /*private void addLocation(LatLng point) {
         mMap.addMarker(new MarkerOptions().position(point));
         ContentValues values = new ContentValues();
         values.put(LocationsDB.LAT, point.latitude);
@@ -101,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void deleteAllLocations() {
         mMap.clear();
         new MyTask().execute();
-    }
+    }*/
 
     @NonNull
     @Override
@@ -112,22 +127,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
-            LatLng point;
-            float zoom;
             // Retrieve data row by row
             do {
-                double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LAT));
-                double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONG));
-                point = new LatLng(lat, lng);
-                zoom = cursor.getFloat(cursor.getColumnIndexOrThrow(LocationsDB.ZOOM));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(LocationsDB.LOCATION_NAME));
 
-                mMap.addMarker(new MarkerOptions().position(point));
+                double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LATITUDE));
+                double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONGITUDE));
+                LatLng point = new LatLng(lat, lng);
+
+                MarkerOptions marker = new MarkerOptions();
+                marker.position(point);
+                marker.title(name);
+                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                mMap.addMarker(marker);
             } while (cursor.moveToNext());
 
-            if (!isMapStateRestored) {
+            /*if (!isMapStateRestored) {
                 CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LOCATION_UNIV, zoom);
                 mMap.moveCamera(update);
-            }
+            }*/
         }
     }
 
@@ -136,7 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    class MyTask extends AsyncTask<ContentValues, Void, Void> {
+    /*class MyTask extends AsyncTask<ContentValues, Void, Void> {
 
         @Override
         protected Void doInBackground(ContentValues... values) {
@@ -149,9 +168,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return null;
         }
-    }
+    }*/
 
-    public void switchView(View view) {
+    /*public void switchView(View view) {
         CameraUpdate update = null;
         if (view.getId() == R.id.city) {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
@@ -164,15 +183,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             update = CameraUpdateFactory.newLatLngZoom(LOCATION_CS, 18f);
         }
         mMap.animateCamera(update);
-    }
+    }*/
 
-    public void uninstall(View view) {
+    /*public void uninstall(View view) {
         Uri packageURI = Uri.parse("package:" + getPackageName());
         Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
         startActivity(uninstallIntent);
-    }
+    }*/
 
-    private void saveMapState() {
+    /*private void saveMapState() {
         if (mMap != null) {
             SharedPreferences prefs = getSharedPreferences("MapPreferences", MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
@@ -186,10 +205,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             editor.apply();
         }
-    }
+    }*/
 
 
-    private void loadMapState() {
+    /*private void loadMapState() {
         SharedPreferences prefs = getSharedPreferences("MapPreferences", MODE_PRIVATE);
 
         int mapType = prefs.getInt("mapType", GoogleMap.MAP_TYPE_NORMAL);
@@ -204,6 +223,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(update);
 
         isMapStateRestored = true;
-    }
+    }*/
 
 }

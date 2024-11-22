@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-public class LocaltionsProvider extends ContentProvider {
+public class LocationsProvider extends ContentProvider {
 
     private LocationsDB locationsDB;
 

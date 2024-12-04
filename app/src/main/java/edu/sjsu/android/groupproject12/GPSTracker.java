@@ -97,7 +97,7 @@ public class GPSTracker {
         //CameraUpdate update = CameraUpdateFactory.newLatLngZoom(START_LOCATION, START_LOCATION_ZOOM);
         CameraPosition position = new CameraPosition.Builder()
                 .target(START_LOCATION)
-                .tilt(60.0f)
+                .tilt(0.0f)
                 .zoom(START_LOCATION_ZOOM)
                 .bearing(0.0f)
                 .build();

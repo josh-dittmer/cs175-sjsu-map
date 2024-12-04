@@ -31,7 +31,7 @@ public class LocationsDB extends SQLiteOpenHelper {
                     "%s BOOLEAN NOT NULL);", TABLE_NAME, ID, LOCATION_NAME, LATITUDE, LONGITUDE, RADIUS, ZOOM, VISITED);
 
     public LocationsDB(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 5);
     }
 
     @Override
@@ -55,6 +55,7 @@ public class LocationsDB extends SQLiteOpenHelper {
         addLocation(db, "Duncan Hall",                          37.33248267290922,  -121.88183017676899, 0.0);
         addLocation(db, "Dr. Martin Luther King Jr. Library",   37.33556025945764,  -121.88499084985756, 0.0);
         addLocation(db, "Dwight Bentel Hall",                   37.33508636969353,  -121.882645494264, 0.0);
+        addLocation(db, "Engineering Building",                   37.337033, -121.881815, 0.0);
         addLocation(db, "Faculty Offices Building",             37.33464462220017,  -121.88265346389251, 0.0);
         addLocation(db, "Hugh Gillis Hall",                     37.336043536863606, -121.88450237053074, 0.0);
         addLocation(db, "Health Building",                      37.33575284295194, -121.87915718951817, 0.0);

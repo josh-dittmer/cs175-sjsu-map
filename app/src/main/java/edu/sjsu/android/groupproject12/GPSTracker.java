@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 
@@ -83,10 +84,17 @@ public class GPSTracker {
                     mLastMarker.remove();
                 }
 
+//                //TODO get locations from db and compute distance
+//                // WARNING THIS CAUSES LOCK IF YOU SEND TOAST, MOVE TO DIFFERENT THREAD
+//                double distance = SphericalUtil.computeDistanceBetween(lastCoords, new LatLng(37.33316634655916,  -121.88291973045379));
+//                Toast.makeText(context, "IS distance: "+ distance,
+//                        Toast.LENGTH_LONG).show();
+
                 MarkerOptions marker = new MarkerOptions();
                 marker.position(lastCoords);
                 marker.title("Current Position");
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+
 
                 mLastMarker = mMap.addMarker(marker);
             }

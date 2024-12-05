@@ -76,6 +76,8 @@ public class LocationsDB extends SQLiteOpenHelper {
         addLocation(db, "Washburn Hall",                        37.333645469010655, -121.87933599794745, 0.0);
         addLocation(db, "Washington Square Hall",               37.334223084499065, -121.88424709448562, 0.0);
         addLocation(db, "Yoshihiro Uchida Hall",                37.333544979580935, -121.883741499371, 0.0);
+        addLocation(db, "test place", 37.4219983, -122.084, 100.0);
+
         
     }
 

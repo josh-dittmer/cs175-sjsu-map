@@ -4,6 +4,7 @@ import static com.google.android.gms.location.Priority.PRIORITY_BALANCED_POWER_A
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,6 +41,7 @@ public class GPSTracker {
 
     private final GoogleMap mMap;
     private Marker mLastMarker;
+    private LocationsDB locationsDB;
 
     private static final LatLng START_LOCATION = new LatLng(37.335371, -121.881050);
     private static final int START_LOCATION_ZOOM = 18;
@@ -105,13 +107,22 @@ public class GPSTracker {
                 double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LATITUDE));
                 double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONGITUDE));
                 double radius = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.RADIUS));
+                boolean visited = cursor.getInt(cursor.getColumnIndexOrThrow(LocationsDB.VISITED)) > 0;
                 LatLng buildingLocation = new LatLng(lat, lng);
 
                 float distance = calculateDistance(userLocation, buildingLocation);
-                if (distance < radius) {
+                if (distance < radius && !visited) {
                     // User is under the radar of this building
-                    Log.d("GPSTracker", "User is under the radar of: " + cursor.getString(cursor.getColumnIndexOrThrow(LocationsDB.LOCATION_NAME)));
-                    // You can add additional actions here, such as unlocking the building
+                    String locationName = cursor.getString(cursor.getColumnIndexOrThrow(LocationsDB.LOCATION_NAME));
+                    Log.d("GPSTracker", "User is under the radar of: " + locationName);
+
+                    // Update the visited column to true
+                    ContentValues values = new ContentValues();
+                    values.put(LocationsDB.VISITED, true);
+                    context.getContentResolver().update(CONTENT_URI, values, LocationsDB.LOCATION_NAME + "=?", new String[]{locationName});
+
+                    Toast.makeText(context, "Found a new Building: " + locationName, Toast.LENGTH_LONG).show();
+
                 }
             } while (cursor.moveToNext());
             cursor.close();

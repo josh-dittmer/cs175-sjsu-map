@@ -56,7 +56,7 @@ public class LocationsProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return (int) locationsDB.update(selectionArgs[0], (Boolean) values.get(LocationsDB.VISITED));
     }
 
 

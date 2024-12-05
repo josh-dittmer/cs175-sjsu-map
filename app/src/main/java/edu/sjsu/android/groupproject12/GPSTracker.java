@@ -4,13 +4,17 @@ import static com.google.android.gms.location.Priority.PRIORITY_BALANCED_POWER_A
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
+import android.net.Uri;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -38,9 +42,11 @@ public class GPSTracker {
 
     private final GoogleMap mMap;
     private Marker mLastMarker;
+    private LocationsDB locationsDB;
 
     private static final LatLng START_LOCATION = new LatLng(37.335371, -121.881050);
     private static final int START_LOCATION_ZOOM = 18;
+    private static final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.groupProject12");
 
     public GPSTracker(Context context, GoogleMap map) {
         this.context = context;
@@ -78,7 +84,12 @@ public class GPSTracker {
             List<Location> locationList = res.getLocations();
             if (!locationList.isEmpty()) {
                 Location lastLocation = locationList.get(locationList.size() - 1);
-                LatLng lastCoords = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//                LatLng lastCoords = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+
+                // hardcoded location for testing
+                LatLng lastCoords = new LatLng(37.336006, -121.881238);
+                Log.d("onLocationResult", "Location: " + lastCoords.toString());
+
 
                 if (mLastMarker != null) {
                     mLastMarker.remove();
@@ -97,9 +108,39 @@ public class GPSTracker {
 
 
                 mLastMarker = mMap.addMarker(marker);
+                checkUserUnderRadar(lastCoords);
             }
         }
     };
+
+    private void checkUserUnderRadar(LatLng userLocation) {
+        Cursor cursor = context.getContentResolver().query(CONTENT_URI, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LATITUDE));
+                double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONGITUDE));
+                double radius = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.RADIUS));
+                boolean visited = cursor.getInt(cursor.getColumnIndexOrThrow(LocationsDB.VISITED)) > 0;
+                LatLng buildingLocation = new LatLng(lat, lng);
+
+                float distance = calculateDistance(userLocation, buildingLocation);
+                if (distance < radius && !visited) {
+                    // User is under the radar of this building
+                    String locationName = cursor.getString(cursor.getColumnIndexOrThrow(LocationsDB.LOCATION_NAME));
+                    Log.d("GPSTracker", "User is under the radar of: " + locationName);
+
+                    // Update the visited column to true
+                    ContentValues values = new ContentValues();
+                    values.put(LocationsDB.VISITED, true);
+                    context.getContentResolver().update(CONTENT_URI, values, LocationsDB.LOCATION_NAME + "=?", new String[]{locationName});
+
+                    Toast.makeText(context, "Found a new Building: " + locationName, Toast.LENGTH_LONG).show();
+
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+    }
 
     public void returnStartLocation() {
         //CameraUpdate update = CameraUpdateFactory.newLatLngZoom(START_LOCATION, START_LOCATION_ZOOM);
@@ -164,7 +205,17 @@ public class GPSTracker {
         if (checkPermission()) {
             client.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mMap.setMyLocationEnabled(true);
+            Log.d("enabledLocationUpdates", "Location updates enabled");
         }
+        else {
+            Log.d("enabledLocationUpdates", "Location updates not enabled");
+        }
+    }
+
+    private float calculateDistance(LatLng start, LatLng end) {
+        float[] results = new float[1];
+        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results);
+        return results[0];
     }
 
     /*private void onSuccess(Location location) {

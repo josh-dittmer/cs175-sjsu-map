@@ -7,10 +7,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
+import android.net.Uri;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -40,6 +43,7 @@ public class GPSTracker {
 
     private static final LatLng START_LOCATION = new LatLng(37.335371, -121.881050);
     private static final int START_LOCATION_ZOOM = 18;
+    private static final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.groupProject12");
 
     public GPSTracker(Context context, GoogleMap map) {
         this.context = context;
@@ -89,9 +93,30 @@ public class GPSTracker {
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 
                 mLastMarker = mMap.addMarker(marker);
+                checkUserUnderRadar(lastCoords);
             }
         }
     };
+
+    private void checkUserUnderRadar(LatLng userLocation) {
+        Cursor cursor = context.getContentResolver().query(CONTENT_URI, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LATITUDE));
+                double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONGITUDE));
+                double radius = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.RADIUS));
+                LatLng buildingLocation = new LatLng(lat, lng);
+
+                float distance = calculateDistance(userLocation, buildingLocation);
+                if (distance < radius) {
+                    // User is under the radar of this building
+                    Log.d("GPSTracker", "User is under the radar of: " + cursor.getString(cursor.getColumnIndexOrThrow(LocationsDB.LOCATION_NAME)));
+                    // You can add additional actions here, such as unlocking the building
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+    }
 
     public void returnStartLocation() {
         //CameraUpdate update = CameraUpdateFactory.newLatLngZoom(START_LOCATION, START_LOCATION_ZOOM);
@@ -157,6 +182,12 @@ public class GPSTracker {
             client.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mMap.setMyLocationEnabled(true);
         }
+    }
+
+    private float calculateDistance(LatLng start, LatLng end) {
+        float[] results = new float[1];
+        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results);
+        return results[0];
     }
 
     /*private void onSuccess(Location location) {

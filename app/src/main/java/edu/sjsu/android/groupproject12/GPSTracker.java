@@ -83,7 +83,12 @@ public class GPSTracker {
             List<Location> locationList = res.getLocations();
             if (!locationList.isEmpty()) {
                 Location lastLocation = locationList.get(locationList.size() - 1);
-                LatLng lastCoords = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//                LatLng lastCoords = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+
+                // hardcoded location for testing
+                LatLng lastCoords = new LatLng(37.336006, -121.881238);
+                Log.d("onLocationResult", "Location: " + lastCoords.toString());
+
 
                 if (mLastMarker != null) {
                     mLastMarker.remove();
@@ -192,6 +197,10 @@ public class GPSTracker {
         if (checkPermission()) {
             client.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mMap.setMyLocationEnabled(true);
+            Log.d("enabledLocationUpdates", "Location updates enabled");
+        }
+        else {
+            Log.d("enabledLocationUpdates", "Location updates not enabled");
         }
     }
 

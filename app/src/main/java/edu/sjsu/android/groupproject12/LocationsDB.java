@@ -10,15 +10,15 @@ import androidx.annotation.Nullable;
 
 public class LocationsDB extends SQLiteOpenHelper {
 
-    protected final static String DATABASE_NAME= "LocationDB";
-    protected final static String TABLE_NAME = "Locations";
-    protected final static String ID = "_id";
-    protected final static String LOCATION_NAME = "LOCATION_NAME";
-    protected final static String LATITUDE = "LATITUDE";
-    protected final static String LONGITUDE = "LONGITUDE";
-    protected final static String RADIUS = "RADIUS";
-    protected final static String ZOOM = "ZOOM_LEVEL";
-    protected final static String VISITED = "VISITED";
+    public final static String DATABASE_NAME= "LocationDB";
+    public final static String TABLE_NAME = "Locations";
+    public final static String ID = "_id";
+    public final static String LOCATION_NAME = "LOCATION_NAME";
+    public final static String LATITUDE = "LATITUDE";
+    public final static String LONGITUDE = "LONGITUDE";
+    public final static String RADIUS = "RADIUS";
+    public final static String ZOOM = "ZOOM_LEVEL";
+    public final static String VISITED = "VISITED";
 
     protected final static float SMALL = 30;
     protected final static float MEDIUM = 50;

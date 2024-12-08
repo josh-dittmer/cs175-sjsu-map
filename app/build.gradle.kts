@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "edu.sjsu.android.groupproject12"
-        minSdk = 24
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -66,6 +66,10 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.play.services.maps)
     implementation(libs.android.maps.utils)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.legacy.support.v4)
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

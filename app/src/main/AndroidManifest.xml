@@ -44,6 +44,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".list.LocationListActivity"
+            android:label="LocationListActivity" />
+
         <provider
             android:name=".LocationsProvider"
             android:authorities="edu.sjsu.android.groupProject12"

@@ -6,12 +6,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.navigation.Navigation;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.sjsu.android.groupproject12.databinding.ActivityMapsBinding;
+import edu.sjsu.android.groupproject12.list.LocationListActivity;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor> {
@@ -55,12 +58,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LoaderManager.getInstance(this).restartLoader(0, null, this);
 
         binding.location.setOnClickListener(v -> tracker.returnStartLocation());
+        binding.locationListButton.setOnClickListener(this::onLocationListClick);
 
         /*binding.city.setOnClickListener(this::switchView);
         binding.univ.setOnClickListener(this::switchView);
         binding.cs.setOnClickListener(this::switchView);
         binding.location.setOnClickListener(this::getLocation);
         binding.uninstall.setOnClickListener(this::uninstall);*/
+    }
+
+    private void onLocationListClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), LocationListActivity.class);
+        startActivity(intent);
     }
 
     @Override

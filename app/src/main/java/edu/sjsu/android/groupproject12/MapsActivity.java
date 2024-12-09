@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
-import androidx.navigation.Navigation;
+//import androidx.navigation.Navigation;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;

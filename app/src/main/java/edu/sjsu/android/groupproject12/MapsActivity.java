@@ -11,6 +11,10 @@ import androidx.loader.content.Loader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -106,13 +110,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 double lat = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LATITUDE));
                 double lng = cursor.getDouble(cursor.getColumnIndexOrThrow(LocationsDB.LONGITUDE));
+                boolean visited = cursor.getInt(cursor.getColumnIndexOrThrow(LocationsDB.VISITED)) > 0;
                 LatLng point = new LatLng(lat, lng);
 
                 MarkerOptions marker = new MarkerOptions();
                 marker.position(point);
                 marker.title(name);
-                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
 
+                if (visited) {
+                    marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                } else {
+                    marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                }
                 mMap.addMarker(marker);
             } while (cursor.moveToNext());
 

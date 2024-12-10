@@ -1,5 +1,5 @@
 # APK
-- Download it [here](link.to.google.drive.final.build)
+- Download it [here](https://drive.google.com/file/d/1bAGBFwxhlO3NJfjxJW4ndal5udNYY4tz/view?usp=sharing)
 # Backlog
 - insert image of backlog
 - Your backlog should be error-free (i.e. no red-background cells)
@@ -22,6 +22,7 @@
         - Main page:
               - ![Main Screen](demo_images/main_screen.png)
               The main page shows the user's current location and the buildings that they have visited.
+              - The visited buildings are marked with a yellow marker and the not visited buildings are marked with a pink marker.
               There are 3 buttons on the main page:
                - Locate me (cross hairs button in the upper right corner): Centers the map on the user's current location.
                - Show visited building(map icon in the bottom right corner): Shows the buildings that the user has visited.

@@ -30,22 +30,18 @@ import edu.sjsu.android.groupproject12.list.LocationListActivity;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor> {
 
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
 
     private GPSTracker tracker;
 
-    //private final LatLng LOCATION_UNIV = new LatLng(37.335371, -121.881050);
-    //private final LatLng LOCATION_CS = new LatLng(37.333714, -121.881860);
-
     private final Uri CONTENT_URI = Uri.parse("content://edu.sjsu.android.groupProject12");
 
-    private boolean isMapStateRestored = false;
+    //private boolean isMapStateRestored = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // Initialize the SupportMapFragment and request the map to be loaded
@@ -59,12 +55,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         binding.location.setOnClickListener(v -> tracker.returnStartLocation());
         binding.locationListButton.setOnClickListener(this::onLocationListClick);
-
-        /*binding.city.setOnClickListener(this::switchView);
-        binding.univ.setOnClickListener(this::switchView);
-        binding.cs.setOnClickListener(this::switchView);
-        binding.location.setOnClickListener(this::getLocation);
-        binding.uninstall.setOnClickListener(this::uninstall);*/
     }
 
     private void onLocationListClick(View view) {
@@ -73,26 +63,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         tracker = new GPSTracker(this, mMap);
-
-        //loadMapState();
-
-        //mMap.setOnMapClickListener(this::addLocation);
-        //mMap.setOnMapLongClickListener(p -> deleteAllLocations());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //saveMapState();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //saveMapState();
     }
 
     @Override
@@ -107,25 +90,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
-    /*public void getLocation(View view){
-        GPSTracker tracker = new GPSTracker(this);
-        tracker.getLocation();
-    }*/
-
-    /*private void addLocation(LatLng point) {
-        mMap.addMarker(new MarkerOptions().position(point));
-        ContentValues values = new ContentValues();
-        values.put(LocationsDB.LAT, point.latitude);
-        values.put(LocationsDB.LONG, point.longitude);
-        values.put(LocationsDB.ZOOM, mMap.getCameraPosition().zoom);
-        new MyTask().execute(values);
-    }
-
-    private void deleteAllLocations() {
-        mMap.clear();
-        new MyTask().execute();
-    }*/
 
     @NonNull
     @Override
@@ -163,42 +127,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
     }
-
-    /*class MyTask extends AsyncTask<ContentValues, Void, Void> {
-
-        @Override
-        protected Void doInBackground(ContentValues... values) {
-            // if there is a ContentValues object passed in, insert
-            if (values != null & values.length > 0 && values[0] != null) {
-                getContentResolver().insert(CONTENT_URI, values[0]);
-            } else {
-                // else delete
-                getContentResolver().delete(CONTENT_URI, null, null);
-            }
-            return null;
-        }
-    }*/
-
-    /*public void switchView(View view) {
-        CameraUpdate update = null;
-        if (view.getId() == R.id.city) {
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-            update = CameraUpdateFactory.newLatLngZoom(LOCATION_UNIV, 10f);
-        } else if (view.getId() == R.id.univ) {
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            update = CameraUpdateFactory.newLatLngZoom(LOCATION_UNIV, 14f);
-        } else {
-            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-            update = CameraUpdateFactory.newLatLngZoom(LOCATION_CS, 18f);
-        }
-        mMap.animateCamera(update);
-    }*/
-
-    /*public void uninstall(View view) {
-        Uri packageURI = Uri.parse("package:" + getPackageName());
-        Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-        startActivity(uninstallIntent);
-    }*/
 
     /*private void saveMapState() {
         if (mMap != null) {

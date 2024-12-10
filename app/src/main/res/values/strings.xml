@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">SJSU Explorer</string>
-    <string name="title_activity_temp">TempActivity</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="app_name">My Campus Explorer</string>
     <string name="location_contentDescription">Go to university</string>
     <string name="location_list_button_contentDescription">View location list</string>
 </resources>

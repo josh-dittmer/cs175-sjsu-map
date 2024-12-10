@@ -16,48 +16,6 @@
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="58dp" />
 
-    <!--<Button
-        android:id="@+id/city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="City"
-        app:layout_constraintEnd_toStartOf="@+id/univ"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/univ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="University"
-        app:layout_constraintBottom_toBottomOf="@+id/city"
-        app:layout_constraintEnd_toStartOf="@+id/cs"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/city"
-        app:layout_constraintTop_toTopOf="@+id/city" />
-
-    <Button
-        android:id="@+id/cs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CS"
-        app:layout_constraintBottom_toBottomOf="@+id/univ"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/univ"
-        app:layout_constraintTop_toTopOf="@+id/univ" />!-->
-
-    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/uninstall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@android:drawable/ic_menu_delete"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toTopOf="@id/location"
-        app:layout_constraintEnd_toEndOf="parent"/>!-->
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/location_list_button"
         android:layout_width="wrap_content"

@@ -35,8 +35,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_maps">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,8 +43,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".list.LocationListActivity"
-            android:label="LocationListActivity" />
+        <activity android:name=".list.LocationListActivity" />
 
         <provider
             android:name=".LocationsProvider"

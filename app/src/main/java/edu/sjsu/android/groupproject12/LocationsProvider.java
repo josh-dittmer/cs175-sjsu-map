@@ -23,7 +23,7 @@ public class LocationsProvider extends ContentProvider {
 
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         return locationsDB.deleteAllLocations();
     }
 
@@ -56,6 +56,10 @@ public class LocationsProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
+
+        assert selectionArgs != null;
+        assert values != null;
+
         return (int) locationsDB.update(selectionArgs[0], (Boolean) values.get(LocationsDB.VISITED));
     }
 

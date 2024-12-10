@@ -1,7 +1,5 @@
 package edu.sjsu.android.groupproject12;
 
-import static com.google.android.gms.location.Priority.PRIORITY_BALANCED_POWER_ACCURACY;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -26,11 +24,8 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
@@ -39,8 +34,8 @@ public class GPSTracker {
     private final Context context;
 
     private final GoogleMap mMap;
-    private Marker mLastMarker;
-    private LocationsDB locationsDB;
+
+    //private Marker mLastMarker;
 
     private static final LatLng START_LOCATION = new LatLng(37.335371, -121.881050);
     private static final int START_LOCATION_ZOOM = 18;
@@ -82,16 +77,16 @@ public class GPSTracker {
             List<Location> locationList = res.getLocations();
             if (!locationList.isEmpty()) {
                 Location lastLocation = locationList.get(locationList.size() - 1);
-//                LatLng lastCoords = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                LatLng lastCoords = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
 
                 // hardcoded location for testing
-                LatLng lastCoords = new LatLng(37.336006, -121.881238);
-                Log.d("onLocationResult", "Location: " + lastCoords.toString());
+                //LatLng lastCoords = new LatLng(37.336006, -121.881238);
+                //Log.d("onLocationResult", "Location: " + lastCoords.toString());
 
 
-                if (mLastMarker != null) {
+                /*if (mLastMarker != null) {
                     mLastMarker.remove();
-                }
+                }*/
 
 //                //TODO get locations from db and compute distance
 //                // WARNING THIS CAUSES LOCK IF YOU SEND TOAST, MOVE TO DIFFERENT THREAD
@@ -99,13 +94,13 @@ public class GPSTracker {
 //                Toast.makeText(context, "IS distance: "+ distance,
 //                        Toast.LENGTH_LONG).show();
 
-                MarkerOptions marker = new MarkerOptions();
+                /*MarkerOptions marker = new MarkerOptions();
                 marker.position(lastCoords);
                 marker.title("Current Position");
                 marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 
 
-                mLastMarker = mMap.addMarker(marker);
+                mLastMarker = mMap.addMarker(marker);*/
                 checkUserUnderRadar(lastCoords);
             }
         }
@@ -215,16 +210,4 @@ public class GPSTracker {
         Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results);
         return results[0];
     }
-
-    /*private void onSuccess(Location location) {
-        if (location != null) {
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            Toast.makeText(context, "Elias Keller is at \n" +
-                            "Lat " + latitude + "\nLong: " + longitude,
-                    Toast.LENGTH_LONG).show();
-        } else
-            Toast.makeText(context, "Unable to get location",
-                    Toast.LENGTH_LONG).show();
-    }*/
 }

@@ -21,7 +21,7 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(FragmentLocationBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
